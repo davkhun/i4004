@@ -86,7 +86,7 @@ function getBase64Link() {
         return null;
     }
     let b64 = window.btoa(source);
-    return window.location.origin + '/index.html?code=' + b64;
+    return window.location.origin + window.location.pathname + 'index.html?code=' + b64;
 }
 
 function setBase64Code() {
