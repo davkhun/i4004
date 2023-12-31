@@ -183,12 +183,11 @@ function add(params) {
 }
 
 
-// TODO: test
 // substract register from accumulator with borrow
 function sub(params) {
     let index = getRegisterIndex(params[0]);
-    _acc = _acc + (_cc == 0? 1: 0) + (_rx[index] ^ 0xf);
-    _cc = _acc >> 4;
+    _acc = _acc + (_cc == 0? 1: 0) + ~(_rx[index]);
+    _cc = _acc > 0? 1: 0;
     _acc = _acc & 0xf;
 }
 
@@ -464,10 +463,9 @@ function adm() {
 }
 
 // substract data ram from memory with borrow
-// TODO: test
 function sbm() {
-    _acc = _acc + (_cc == 0? 1: 0) + (_ram[_dataRamBank][_ramChip][_ramChipLine][_dp] ^ 0xf);
-    _cc = _acc >> 4;
+    _acc = _acc + (_cc == 0? 1: 0) + ~(_ram[_dataRamBank][_ramChip][_ramChipLine][_dp]);
+    _cc = _acc > 0? 1: 0;
     _acc = _acc & 0xf;
 }
 
