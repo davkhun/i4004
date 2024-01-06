@@ -29,6 +29,19 @@
     </nav>
     <div class="container pt-5">
         <h1>Intel 4004 assembler documentation</h1>
+        <h2>Implementation features</h2>
+        <p>
+            <ul>
+                <li>16 half-byte registers, which can be called by "r[0-15]"</li>
+                <li>1 half-byte accumulator</li>
+                <li>1 bit carry flag</li>
+                <li>8 register pairs "[0-7]p" for FIM and SRC instructions. Each RP linked on pair of register, eg. "0p" = "r0 r1", "1p" = "r2 r3", etc.</li>
+                <li>4096 bytes of RAM, grouped by 8 banks [0-7], which have 4 ram chips [0-3], which have 4 register "lines", which have 16 half-bytes in each line.</li>
+                <li>status character RAM with similary grouping on banks, chips, lines, for instructions WRx, RDx</li>
+                <li>not implemented yet: FIN, JIN, RDR, WMP, WRR, WPM</li>
+            </ul>
+        </p>
+        <h2>Instructions</h2>
         <div class="accordion" id="acc">
             <div class="accordion-item">
               <h2 class="accordion-header" id="incA">
@@ -677,7 +690,7 @@ rdm</pre>
               <div class="accordion-item">
                 <h2 class="accordion-header" id="rdxA">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rdxC" aria-expanded="true" aria-controls="rdxC">
-                    RDx (read data ram status character [RDX0-RDX3])
+                    RDx (read data ram status character [RD0-RD3])
                   </button>
                 </h2>
                 <div id="rdxC" class="accordion-collapse collapse" aria-labelledby="rdxA" data-bs-parent="#acc">
