@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>i4004 assembler documentation</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">i4004</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="docs.html">Docs</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container pt-5">
+        <h1>Intel 4004 assembler documentation</h1>
+        <div class="accordion" id="acc">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="incA">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#incC" aria-expanded="true" aria-controls="incC">
+                  INC (increment register)
+                </button>
+              </h2>
+              <div id="incC" class="accordion-collapse collapse" aria-labelledby="incA" data-bs-parent="#acc">
+                <div class="accordion-body">
+                    The index register indicated by REG is incremented by one.
+                    The carry bit is not affected
+                    <pre class="code-border">
+inc r0
+inc r1
+inc r1</pre>
+                    <a href="index.html?code=aW5jIHIwCmluYyByMQppbmMgcjE=" target="_blank">Try it out</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="addA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addC" aria-expanded="true" aria-controls="addC">
+                    ADD (add register to accumulator)
+                  </button>
+                </h2>
+                <div id="addC" class="accordion-collapse collapse" aria-labelledby="addA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the index register REG plus the contents of the carry bit are
+                    added to the accumulator. The result is kept in the accumulator; the contents
+                    of REG are unchanged. The carry bit is set if there is, a carry out of the highorder bit position, and reset if there is no carty. 
+                      <pre class="code-border">
+ldm 5
+xch r1
+ldm 3
+add r1</pre>
+                      <a href="index.html?code=bGRtIDUKeGNoIHIxCmxkbSAzCmFkZCByMQ==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="finA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#finC" aria-expanded="true" aria-controls="finC">
+                    FIN (fetch indirect on register pair)
+                  </button>
+                </h2>
+                <div id="finC" class="accordion-collapse collapse" aria-labelledby="finA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of registers 0 and 1 are concatenated to form the lower 8 bits of a
+                    ROM or program RAM address. The upper 4 bits of the address are assumed
+                    equal to the upper 4 bits of the address at which the FIN instruction is located
+                    (that is I the address of the FIN instruction and the address referenced by register
+                    o and 1 are on the same page). The 8 bits at the designated address are loaded
+                    into the register pair specified by RP. The 8 bits at the designated address are
+                    unaffected; the contehts of registers 0 and I are unaffected unless RP = 0. 
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="subA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#subC" aria-expanded="true" aria-controls="subC">
+                    SUB (substract register from accumulator with borrow)
+                  </button>
+                </h2>
+                <div id="subC" class="accordion-collapse collapse" aria-labelledby="subA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of index register REG are subtracted with borrow from the accumulator.
+                    The result is kept in the accumulator; the contents of REG are unchanged. A borrow
+                    from the previous subtraction is indicated by the carry bit being equal to one at
+                    the beginning of this instruction. If the carry bit equals zero at the beginning of
+                    this instruction it is assumed that no borrow occurred from the previous subtraction.
+                    This instruction sets the carry bit if there is no borrow out of the high order bit
+                    position, and resets the carry bit if there is a borrow.
+                    The subtract with borrow operation is actually performed by complementing each bit
+                    of the contents of REG and adding the resulting value plus the complement of the
+                    carry bit to the accumulator.                     
+                      <pre class="code-border">
+ldm 3
+xch r1
+ldm 5
+sub r1</pre>
+                      <a href="index.html?code=bGRtIDMKeGNoIHIxCmxkbSA1CnN1YiByMQ==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="ldA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ldC" aria-expanded="true" aria-controls="ldC">
+                    LD (load accumulator from specific register)
+                  </button>
+                </h2>
+                <div id="ldC" class="accordion-collapse collapse" aria-labelledby="ldA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of REG are stored into the accumulator, replacing the previous contents
+                    of the accumulator. The contents of REG are unchanged. The carry bit is not
+                    affected. 
+                      <pre class="code-border">
+ldm 2
+xch r0
+ldm 3
+ld r0</pre>
+                      <a href="index.html?code=bGRtIDIKeGNoIHIwCmxkbSAzCmxkIHIw" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="xchA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#xchC" aria-expanded="true" aria-controls="xchC">
+                    XCH (exchange register and accumulator)
+                  </button>
+                </h2>
+                <div id="xchC" class="accordion-collapse collapse" aria-labelledby="xchA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the register specified by REG are exchanged with the contents of
+                    the accumulator.
+                    The carry bit is not affected. 
+                      <pre class="code-border">
+ldm 2
+xch r0</pre>
+                      <a href="index.html?code=bGRtIDIKeGNoIHIw" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="clbA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#clbC" aria-expanded="true" aria-controls="clbC">
+                    CLB (clear both (carry & accumulator))
+                  </button>
+                </h2>
+                <div id="clbC" class="accordion-collapse collapse" aria-labelledby="clbA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The accumulator is set to 0000B, and the carry bit is reset. 
+                      <pre class="code-border">
+ldm 4
+stc
+clb</pre>
+                      <a href="index.html?code=bGRtIDQKc3RjCmNsYg==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="clcA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#clcC" aria-expanded="true" aria-controls="clcC">
+                    CLC (clear carry)
+                  </button>
+                </h2>
+                <div id="clcC" class="accordion-collapse collapse" aria-labelledby="clcA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The carry bit is reset to 0. 
+                      <pre class="code-border">
+stc
+clc</pre>
+                      <a href="index.html?code=c3RjCmNsYw==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="iacA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#iacC" aria-expanded="true" aria-controls="iacC">
+                    IAC (increment accumulator (carry affected))
+                  </button>
+                </h2>
+                <div id="iacC" class="accordion-collapse collapse" aria-labelledby="iacA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the accumulator are incremented by one. The carry bit is set if
+                    there is a carry out of the high order bit position I and reset if there is no carry.                     
+                      <pre class="code-border">
+iac
+iac
+iac</pre>
+                      <a href="index.html?code=aWFjCmlhYwppYWM=" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="cmcA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cmcC" aria-expanded="true" aria-controls="cmcC">
+                    CMC (complement carry (inverse))
+                  </button>
+                </h2>
+                <div id="cmcC" class="accordion-collapse collapse" aria-labelledby="cmcA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    If the carry bit = 0 I it is set to 1. If the carry bit is = 1, it is set to O
+                      <pre class="code-border">
+cmc</pre>
+                      <a href="index.html?code=Y21j" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="cmaA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cmaC" aria-expanded="true" aria-controls="cmaC">
+                    CMA (complement accumulator (inverse))
+                  </button>
+                </h2>
+                <div id="cmaC" class="accordion-collapse collapse" aria-labelledby="cmaA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    Each bit of the contents of the accumulator is complemented (producing the so-called one's complement).
+                    The carry bit is not affected. 
+                      <pre class="code-border">
+ldm 1
+cma</pre>
+                      <a href="index.html?code=bGRtIDEKY21h" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="ralA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ralC" aria-expanded="true" aria-controls="ralC">
+                    RAL (rotate accumulator left through carry)
+                  </button>
+                </h2>
+                <div id="ralC" class="accordion-collapse collapse" aria-labelledby="ralA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the accumulator are rotated one bit position to the left.
+                    The high-order bit of the accumulator replaces the carry bit, while the carry bit
+                    replaces the low-order bit of the accumulator. 
+                      <pre class="code-border">
+ldm 10
+ral</pre>
+                      <a href="index.html?code=bGRtIDEwCnJhbA==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="rarA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rarC" aria-expanded="true" aria-controls="rarC">
+                    RAR (rotate accumulator right through carry)
+                  </button>
+                </h2>
+                <div id="rarC" class="accordion-collapse collapse" aria-labelledby="rarA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the accumulator are rotated one bit position to the right.
+                    The low-order bit of the accumulator replaces the carry bit, while the carry bit
+                    replaces the high-order bit of the accumulator. 
+                      <pre class="code-border">
+ldm 3
+rar</pre>
+                      <a href="index.html?code=bGRtIDMKcmFy" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="tccA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tccC" aria-expanded="true" aria-controls="tccC">
+                    TCC (transmit carry and clear)
+                  </button>
+                </h2>
+                <div id="tccC" class="accordion-collapse collapse" aria-labelledby="tccA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    If the carry bit = 0, the accumulator is set to 0000B. If the carry bit = 1, the
+                    accumulator is set to 0001B. In either case I the carry bit is then reset. 
+                      <pre class="code-border">
+cmc
+tcc</pre>
+                      <a href="index.html?code=Y21jCnRjYw==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="dacA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dacC" aria-expanded="true" aria-controls="dacC">
+                    DAC (decrement accumulator)
+                  </button>
+                </h2>
+                <div id="dacC" class="accordion-collapse collapse" aria-labelledby="dacA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the accumulator are decremented by one. The carry bit is set
+                    if there is no borrow out of the high-order bit position I and reset if there is a
+                    borrow. 
+                      <pre class="code-border">
+ldm 2
+dac</pre>
+                      <a href="index.html?code=bGRtIDIKZGFj" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="tcsA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tcsC" aria-expanded="true" aria-controls="tcsC">
+                    TCS (transfer carry substract (for subract decimal numbers greater than 4 bits in lenght))
+                  </button>
+                </h2>
+                <div id="tcsC" class="accordion-collapse collapse" aria-labelledby="tcsA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    If the carry bit = 0, the accumulator is set to 9. If the carry bit = 1, the
+                    accumulator is set to 10. In either case the carry bit is then reset. 
+                      <pre class="code-border">
+tcs</pre>
+                      <a href="index.html?code=dGNz" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="stcA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#stcC" aria-expanded="true" aria-controls="stcC">
+                    STC (set carry)
+                  </button>
+                </h2>
+                <div id="stcC" class="accordion-collapse collapse" aria-labelledby="stcA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The carry bit is set to 1.
+                      <pre class="code-border">
+stc</pre>
+                      <a href="index.html?code=c3Rj" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="daaA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#daaC" aria-expanded="true" aria-controls="daaC">
+                    DAA (decimal adjust accumulator)
+                  </button>
+                </h2>
+                <div id="daaC" class="accordion-collapse collapse" aria-labelledby="daaA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    If the contents of the accumulator are greater than 9, or if the carty bit = 1,
+                    the accumulator is incremented by 6. Otherwise, the accumulator is not affected.
+                    If the result of incrementing the accumulator produces a carry out of the high order
+                    bit position, the cany bit is set. Otherwise the carry bit is unaffected (in particular,
+                    it is not reset). 
+                      <pre class="code-border">
+ldm 12
+daa</pre>
+                      <a href="index.html?code=bGRtIDEyCmRhYQ==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="kbpA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#kbpC" aria-expanded="true" aria-controls="kbpC">
+                    KBP (keyboard process)
+                  </button>
+                </h2>
+                <div id="kbpC" class="accordion-collapse collapse" aria-labelledby="kbpA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    If the accumulator contains 0000B, it remains unchanged. If one bit of the accumulator is set, the accumulator is set to a number from 1 to 4 indicating which bit was
+                    set.
+                    If more than one bit of the accumulator is set, the accumulator is set to 1111B. 
+                      <pre class="code-border">
+ldm 7
+kbp</pre>
+                      <a href="index.html?code=bGRtIDcKa2Jw" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="fimA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fimC" aria-expanded="true" aria-controls="fimC">
+                    FIM (fetch immediate)
+                  </button>
+                </h2>
+                <div id="fimC" class="accordion-collapse collapse" aria-labelledby="fimA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The 8 bits of immediate data are loaded into the register pair specified by RP.
+                    The carry bit is not affected.
+                      <pre class="code-border">
+fim 1p $12</pre>
+                      <a href="index.html?code=ZmltIDFwICQxMg==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="ldmA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ldmC" aria-expanded="true" aria-controls="ldmC">
+                    LDM (load accumulator)
+                  </button>
+                </h2>
+                <div id="ldmC" class="accordion-collapse collapse" aria-labelledby="ldmA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The 4 bits of immediate data are loaded into the accumulator.
+                    The carry bit is not affected. 
+                      <pre class="code-border">
+ldm 5</pre>
+                      <a href="index.html?code=bGRtIDU=" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="junA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#junC" aria-expanded="true" aria-controls="junC">
+                    JUN (jump unconditionally)
+                  </button>
+                </h2>
+                <div id="junC" class="accordion-collapse collapse" aria-labelledby="junA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    Program execution is transferred to the instruction at location LABEL, which may
+                    be anywhere in code.
+                    The carry bit is not affected. 
+                      <pre class="code-border">
+ldm 1
+jun lbl
+xch r1
+
+lbl:
+xch r0</pre>
+                      <a href="index.html?code=bGRtIDEKanVuIGxibAp4Y2ggcjEKbGJsOgp4Y2ggcjA=" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="jinA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jinC" aria-expanded="true" aria-controls="jinC">
+                    JIN (jump indirect)
+                  </button>
+                </h2>
+                <div id="jinC" class="accordion-collapse collapse" aria-labelledby="jinA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The 8 bits held in the register pair specified by RP are loaded into the lower 8
+                    bits of the program counter. The highest 4 bits of the program counter are unchanged. Therefore I program execution continues at this address on the same
+                    page of memory in which the JIN instruction is loaded.
+                    The carry bit is not affected. 
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="jcnA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jcnC" aria-expanded="true" aria-controls="jcnC">
+                    JCN (jump on condition)
+                  </button>
+                </h2>
+                <div id="jcnC" class="accordion-collapse collapse" aria-labelledby="jcnA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    CPU can test few conditions to decide whether to jump or not. Most useful of them for us are those on the state of Carry flag (set or clear) and of Accumulator (zero or not). All these are performed by JCN instruction which uses modifier of special kind before label:
+                    JCN C0 - jump if Carry is not set (cy = 0),
+                    JCN C1 - jump if Carry is set (cy = 1),
+                    JCN AZ - jump if Accumulator equals to zero,
+                    JCN AN - jump if Accumulator is not zero
+                      <pre class="code-border">
+ldm 4
+xch r0
+ 
+one_more:
+
+clc
+ld r1
+add r0
+xch r1
+                        
+ld r0
+dac
+xch r0
+jcn c1 one_more</pre>
+                      <a href="index.html?code=bGRtIDQKeGNoIHIwCgpvbmVfbW9yZToKCmNsYwpsZCByMQphZGQgcjAKeGNoIHIxCgpsZCByMApkYWMKeGNoIHIwCmpjbiBjMSBvbmVfbW9yZQ==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="iszA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#iszC" aria-expanded="true" aria-controls="iszC">
+                    ISZ (increment register and skip if zero)
+                  </button>
+                </h2>
+                <div id="iszC" class="accordion-collapse collapse" aria-labelledby="iszA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The index register specified by REG is incremented by one. If the result is 0000B,
+                    program execution continues with the next sequential instruction. If the result
+                    does not equal 0000B, execution continues from LABEL
+                    The carry bit is not affect€d.                     
+                      <pre class="code-border">
+ldm 10
+xch r0
+                        
+lbl:
+iac
+isz r0 lbl</pre>
+                      <a href="index.html?code=bGRtIDEwCnhjaCByMAoKbGJsOgppYWMKaXN6IHIwIGxibAo=" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="jmsA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#jmsC" aria-expanded="true" aria-controls="jmsC">
+                    JMS (jump to subroutine)
+                  </button>
+                </h2>
+                <div id="jmsC" class="accordion-collapse collapse" aria-labelledby="jmsA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    Jump to subroutine - works as JUN but return address (i.e. of the next instruction) is pushed into stack of processor
+                      <pre class="code-border">
+ldm 0
+xch r0
+                        
+jms add_three
+jms add_three
+jms add_three
+jun finish
+                        
+add_three:
+ld r0
+iac
+iac
+iac
+xch r0
+bbl 0
+                        
+finish:
+nop</pre>
+                      <a href="index.html?code=bGRtIDAKeGNoIHIwCgpqbXMgYWRkX3RocmVlCmptcyBhZGRfdGhyZWUKam1zIGFkZF90aHJlZQpqdW4gZmluaXNoCgphZGRfdGhyZWU6CmxkIHIwCmlhYwppYWMKaWFjCnhjaCByMApiYmwgMAoKZmluaXNoOgpub3A=" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="bblA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bblC" aria-expanded="true" aria-controls="bblC">
+                    BBL (branch back and load)
+                  </button>
+                </h2>
+                <div id="bblC" class="accordion-collapse collapse" aria-labelledby="bblA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    "branch back and load" - pops the address from stack and jumps to it - so it is a return from subroutine; it additionally loads supplied value to accumulator (e.g. bbl 7) which may serve as an error code etc
+                      <pre class="code-border">
+ldm 0
+xch r0
+                                                
+jms add_three
+jms add_three
+jms add_three
+jun finish
+                                                
+add_three:
+ld r0
+iac
+iac
+iac
+xch r0
+bbl 0
+                                                
+finish:
+nop</pre>
+<a href="index.html?code=bGRtIDAKeGNoIHIwCgpqbXMgYWRkX3RocmVlCmptcyBhZGRfdGhyZWUKam1zIGFkZF90aHJlZQpqdW4gZmluaXNoCgphZGRfdGhyZWU6CmxkIHIwCmlhYwppYWMKaWFjCnhjaCByMApiYmwgMAoKZmluaXNoOgpub3A=" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="nopA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nopC" aria-expanded="true" aria-controls="nopC">
+                    NOP (no operation)
+                  </button>
+                </h2>
+                <div id="nopC" class="accordion-collapse collapse" aria-labelledby="nopA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    No operation is performed. The program counter is incremented by one and execution continues with the next sequential instruction. 
+                      <pre class="code-border">
+nop</pre>
+                      <a href="index.html?code=bm9w" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="dclA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dclC" aria-expanded="true" aria-controls="dclC">
+                    DCL (designate command line)
+                  </button>
+                </h2>
+                <div id="dclC" class="accordion-collapse collapse" aria-labelledby="dclA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    There may be up to 8 DATA RAM BANKS, each of
+                    which consists of four DATA RAM units. The DCL instruction uses the rightmost
+                    3 bits of the accumulator to determine which of the 8 DATA RAM BANKS will be
+                    referenced during subsequent operations. 
+                      <pre class="code-border">
+ldm 3
+dcl</pre>
+                      <a href="index.html?code=bGRtIDMKZGNs" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="srcA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#srcC" aria-expanded="true" aria-controls="srcC">
+                    SRC (send register control)
+                  </button>
+                </h2>
+                <div id="srcC" class="accordion-collapse collapse" aria-labelledby="srcA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The 8-bits contained in the register pair specified byte are used as an address.
+                    This address may designate a particular DATA RAM data character, a DATA RAM
+                    status character, a RAM output port, or a ROM input/output port. In fact, the address designates
+                    all of these simutaneously.
+                    The address sent by the SRC remains in effect until changed by a subsequent
+                    SRC.
+                    The only DATA RAM bank which receives the SRC address is the one selected by
+                    the last previous DCL instruction.
+                    The carry bit and the contents of the register pair are unaffected. 
+                      <pre class="code-border">
+fim 0p $12
+src 0p
+ld r1
+wrm</pre>
+                      <a href="index.html?code=ZmltIDBwICQxMgpzcmMgMHAKbGQgcjEKd3Jt" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="rdmA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rdmC" aria-expanded="true" aria-controls="rdmC">
+                    RDM (read data memory character)
+                  </button>
+                </h2>
+                <div id="rdmC" class="accordion-collapse collapse" aria-labelledby="rdmA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The DATA RAM data character specified by the last SRC instruction is loaded into
+                    the accumulator. The carry bit and the data character are not affected.                     
+                      <pre class="code-border">
+fim 0p $12
+src 0p
+ld r1
+wrm
+src 1p
+rdm</pre>
+                      <a href="index.html?code=ZmltIDBwICQxMgpzcmMgMHAKbGQgcjEKd3JtCnNyYyAxcApyZG0=" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="rdxA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rdxC" aria-expanded="true" aria-controls="rdxC">
+                    RDx (read data ram status character [RDX0-RDX3])
+                  </button>
+                </h2>
+                <div id="rdxC" class="accordion-collapse collapse" aria-labelledby="rdxA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The DATA RAM status character whose number from 0 to 3 is specified by x, associated with the DATA RAM register specified by the last SRC instruction, is loaded
+                    into the accumulator.
+                    The carry bit and the status character are not affected. 
+                      <pre class="code-border">
+ldm 1
+wr0
+ldm 2
+wr1
+ldm 3
+wr2
+ldm 4
+wr3
+rd2</pre>
+                      <a href="index.html?code=bGRtIDEKd3IwCmxkbSAyCndyMQpsZG0gMwp3cjIKbGRtIDQKd3IzCnJkMg==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="rdrA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rdrC" aria-expanded="true" aria-controls="rdrC">
+                    RDR (read rom port)
+                  </button>
+                </h2>
+                <div id="rdrC" class="accordion-collapse collapse" aria-labelledby="rdrA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The ROM port specified by the last SRC instruction is read. When using the 4001
+                    ROM I each of the 4 lines of the port may be an input or an output line; the data on
+                    the input lines is transferred to the corresponding bits of the accumulator. Any
+                    output lines cause either a 0 or a 1 to be transferred to the corresponding bits of
+                    the accumulator. Whether a 0 or a 1 is transferred is a function of the hardware,
+                    not under control of the programmer.
+                    The carry bit is not affected. 
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="wrmA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#wrmC" aria-expanded="true" aria-controls="wrmC">
+                    WRM (write data ram character)
+                  </button>
+                </h2>
+                <div id="wrmC" class="accordion-collapse collapse" aria-labelledby="wrmA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the accumulator are written into the DATA RAM data character specified by the la st SRC instruction.
+                    The carry bit and the accumulator are not affected.
+                      <pre class="code-border">
+ldm 5
+wrm</pre>
+                      <a href="index.html?code=bGRtIDUKd3Jt" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="wrxA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#wrxC" aria-expanded="true" aria-controls="wrxC">
+                    WRx (write data ram status character [WR0-WR3])
+                  </button>
+                </h2>
+                <div id="wrxC" class="accordion-collapse collapse" aria-labelledby="wrxA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                      The index register indicated by REG is incremented by one.
+                      The carry bit is not affected
+                      <pre class="code-border">
+ldm 1
+wr0
+ldm 2
+wr1
+ldm 3
+wr2
+ldm 4
+wr3
+rd2</pre>
+                      <a href="index.html?code=bGRtIDEKd3IwCmxkbSAyCndyMQpsZG0gMwp3cjIKbGRtIDQKd3IzCnJkMg==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="wmpA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#wmpC" aria-expanded="true" aria-controls="wmpC">
+                    WMP (write ram port)
+                  </button>
+                </h2>
+                <div id="wmpC" class="accordion-collapse collapse" aria-labelledby="wmpA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the accumulator are written to the output port associated with the
+                    DATA RAM chip selected by the la st SRC instruction. This value will stay at the
+                    output port until overwritten.
+                    The carry bit and the accumulator are unchanged.
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="wrrA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#wrrC" aria-expanded="true" aria-controls="wrrC">
+                    WRR (write rom port)
+                  </button>
+                </h2>
+                <div id="wrrC" class="accordion-collapse collapse" aria-labelledby="wrrA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The contents of the accumulator are written to the output port associated with the
+                    ROM selected by the last SRC instruction. This value will stay at the output port
+                    until overwritten.
+                    The carry bit and the accumulator are unchanged. 
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="admA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#admC" aria-expanded="true" aria-controls="admC">
+                    ADM (add data ram to accumulator with carry)
+                  </button>
+                </h2>
+                <div id="admC" class="accordion-collapse collapse" aria-labelledby="admA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The DATA RAM data character specified by the last SRC instruction, plus the
+                    carry bit, are added to the accumulator.
+                    The carry bit will be set if the result generates a carry, and will be reset otherwise.
+                    The data character is not affected.                     
+                      <pre class="code-border">
+ldm 5
+wrm
+ldm 3
+adm</pre>
+                      <a href="index.html?code=bGRtIDUKd3JtCmxkbSAzCmFkbQ==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="sbmA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sbmC" aria-expanded="true" aria-controls="sbmC">
+                    SBM (substract data ram from memory with borrow)
+                  </button>
+                </h2>
+                <div id="sbmC" class="accordion-collapse collapse" aria-labelledby="sbmA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    The value of the DATA RAM character specified by the last SRC instruction is subtracted
+                    from the accumulator with borrow. The data character is unaffected. A borrow from the
+                    previous subtraction is indicated by the carry bit being equal to one at the beginning
+                    of this instruction. No borrow from the previous subtraction is indicated by the carry
+                    bit being equal to zero at the beginning of this instruction.
+                    This instruction sets the carry bit if the result generates no borrow I and resets the
+                    carry bit if the result generates a borrow.
+                    The subtract with borrow operation is actually performed by complementing each bit of
+                    the data character and adding the resulting value plus the complement of the carry bit
+                    to the accumulator. 
+                      <pre class="code-border">
+ldm 3
+wrm
+ldm 5
+sbm</pre>
+                      <a href="index.html?code=bGRtIDMKd3JtCmxkbSA1CnNibQ==" target="_blank">Try it out</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="wpmA">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#wpmC" aria-expanded="true" aria-controls="wpmC">
+                    WMP (write program ram)
+                  </button>
+                </h2>
+                <div id="wpmC" class="accordion-collapse collapse" aria-labelledby="wpmA" data-bs-parent="#acc">
+                  <div class="accordion-body">
+                    This is a special instruction which may be used to write the contents of the accumulator into a half byte of program RAM, or read the contents of a half byte of program
+                    RAM into a ROM input port where it can be acces sed by a program.
+                    The carry bit is unaffected. 
+                  </div>
+                </div>
+              </div>
+
+          </div>
+    </div>
+
+    <script>
+        $(document).ready(() => {
+        });
+    </script>
+
+    <style>
+        .code-border {
+            border: solid;
+            border-color: lightgray;
+        }
+    </style>
+
+</body>
+
+</html>
